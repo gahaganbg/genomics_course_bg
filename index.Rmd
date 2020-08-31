@@ -3,7 +3,6 @@ title: "Week 2 Assignment"
 author: "Ben Gahagan"
 date: "8/31/2020"
 output: html_document
-bibliography: data/references.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -12,10 +11,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-## Link to Week 1 Assignment
+## Link to Lab Assignments
 
 [Gahagan Week 1 Assignment](Lab1_BIG.html)
-
+[Gahagan Week 2 Assignment](Lab2_BIG.html)
 
 ## Some Background
 
@@ -34,7 +33,4 @@ I work for the [Massachusetts Division of Marine Fisheries](https://www.mass.gov
 
 I am also a PhD student at UMASS Amherst in the [Environmental Conservation Department](https://eco.umass.edu/).
 
-Application written in R [@RCoreTeam] using the Shiny framework [@Chang2015].
-Week 1 readings included journal articles by B.J. Strasser [@Strasser] and M.O. Dayhoff [@Dayhoff]
 
-## REFERENCES

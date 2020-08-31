@@ -1,0 +1,20 @@
+---
+title: "Week 2 Lab Assignment"
+author: "Ben Gahagan"
+date: "8/31/2020"
+output: html_document
+bibliography: data/references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Lab Contents
+[Gahagan Week 1 Assignment](Lab1_BIG.html)
+
+Application written in R [@RCoreTeam].
+
+Week 1 readings included journal articles by B.J. Strasser [@Strasser] and M.O. Dayhoff [@Dayhoff]
+
+## REFERENCES
