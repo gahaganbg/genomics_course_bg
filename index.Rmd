@@ -1,7 +1,7 @@
 ---
-title: "Week 2 Assignment"
+title: "Evolutionary Genomics and Bioinformatics Coursework"
 author: "Ben Gahagan"
-date: "8/31/2020"
+date: "Last updated 8/31/2020"
 output: html_document
 ---
 
@@ -11,13 +11,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-## Link to Lab Assignments
+## Links to Lab Assignments
 
 [Gahagan Week 1 Assignment](Lab1_BIG.html)
+
 [Gahagan Week 2 Assignment](Lab2_BIG.html)
 
 ## Some Background
-
+<font size="4">
 I am a fisher,
 ![](images/fisher.png)
 
@@ -27,10 +28,15 @@ hunter,
 father,
 ![](images/father2.png)
 
+
 and [biologist](https://www.researchgate.net/profile/Ben_Gahagan?_iepl%5BgeneralViewId%5D=W6dJU0dqSZ2wvPcHs305pOyyofBSXiOszZ3V&_iepl%5Bcontexts%5D%5B0%5D=searchReact&_iepl%5BviewId%5D=4lGePA89w6cCmn7bOtHLEyIKNGmvHxqjA2Ww&_iepl%5BsearchType%5D=researcher&_iepl%5Bdata%5D%5BcountLessEqual20%5D=1&_iepl%5Bdata%5D%5BinteractedWithPosition1%5D=1&_iepl%5Bdata%5D%5BwithoutEnrichment%5D=1&_iepl%5Bposition%5D=1&_iepl%5BrgKey%5D=AC%3A7189970&_iepl%5BinteractionType%5D=profileView).
 
 I work for the [Massachusetts Division of Marine Fisheries](https://www.mass.gov/orgs/division-of-marine-fisheries) as Diadromous Fish Biologist.
 
 I am also a PhD student at UMASS Amherst in the [Environmental Conservation Department](https://eco.umass.edu/).
 
+...and a child of the 80's and 90's, so I will remind the world to
 
+![](images/be_excellent.gif)
+
+</font>
