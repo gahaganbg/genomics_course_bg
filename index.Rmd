@@ -35,6 +35,6 @@ I work for the [Massachusetts Division of Marine Fisheries](https://www.mass.gov
 I am also a PhD student at UMASS Amherst in the [Environmental Conservation Department](https://eco.umass.edu/).
 
 Application written in R [@RCoreTeam] using the Shiny framework [@Chang2015].
-Week 1 readings included jornal articles by B.J. Strasser [@Strasser] and M.O. Dayhoff [@Dayhoff]
+Week 1 readings included journal articles by B.J. Strasser [@Strasser] and M.O. Dayhoff [@Dayhoff]
 
 ## REFERENCES
