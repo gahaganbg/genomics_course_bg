@@ -3,6 +3,7 @@ title: "Evolutionary Genomics and Bioinformatics Coursework"
 author: "Ben Gahagan"
 date: "Last updated 8/31/2020"
 output: html_document
+bibliography: data/references2.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -41,4 +42,7 @@ Here is a recent [CV](Gahagan CV 6_2020.pdf)
 
 ![](images/be_excellent.gif)
 
+which does have a philosophical basis [@billnted]
 </font>
+
+## REFERENCES
