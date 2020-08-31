@@ -3,27 +3,38 @@ title: "Week 2 Assignment"
 author: "Ben Gahagan"
 date: "8/31/2020"
 output: html_document
+bibliography: data/references.bib
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+
 ## Link to Week 1 Assignment
+
 [Gahagan Week 1 Assignment](Lab1_BIG.html)
 
 
+## Some Background
 
-```{r cars}
-summary(cars)
-```
+I am a fisher,
+![](images/fisher.png)
 
-## Including Plots
+hunter,
+![](images/hunter.jpg)
 
-You can also embed plots, for example:
+father,
+![](images/father.png)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+and [biologist](https://www.researchgate.net/profile/Ben_Gahagan?_iepl%5BgeneralViewId%5D=W6dJU0dqSZ2wvPcHs305pOyyofBSXiOszZ3V&_iepl%5Bcontexts%5D%5B0%5D=searchReact&_iepl%5BviewId%5D=4lGePA89w6cCmn7bOtHLEyIKNGmvHxqjA2Ww&_iepl%5BsearchType%5D=researcher&_iepl%5Bdata%5D%5BcountLessEqual20%5D=1&_iepl%5Bdata%5D%5BinteractedWithPosition1%5D=1&_iepl%5Bdata%5D%5BwithoutEnrichment%5D=1&_iepl%5Bposition%5D=1&_iepl%5BrgKey%5D=AC%3A7189970&_iepl%5BinteractionType%5D=profileView).
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+I work for the [Massachusetts Division of Marine Fisheries](https://www.mass.gov/orgs/division-of-marine-fisheries) as Diadromous Fish Biologist.
+
+I am also a PhD student at UMASS Amherst in the [Environmental Conservation Department](https://eco.umass.edu/).
+
+Application written in R [@RCoreTeam] using the Shiny framework [@Chang2015].
+Week 1 readings included jornal articles by B.J. Strasser [@Strasser] and M.O. Dayhoff [@Dayhoff]
+
+## REFERENCES
