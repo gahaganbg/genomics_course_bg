@@ -26,7 +26,7 @@ hunter,
 ![](images/hunter.jpg)
 
 father,
-![](images/father.png)
+![](images/father2.png)
 
 and [biologist](https://www.researchgate.net/profile/Ben_Gahagan?_iepl%5BgeneralViewId%5D=W6dJU0dqSZ2wvPcHs305pOyyofBSXiOszZ3V&_iepl%5Bcontexts%5D%5B0%5D=searchReact&_iepl%5BviewId%5D=4lGePA89w6cCmn7bOtHLEyIKNGmvHxqjA2Ww&_iepl%5BsearchType%5D=researcher&_iepl%5Bdata%5D%5BcountLessEqual20%5D=1&_iepl%5Bdata%5D%5BinteractedWithPosition1%5D=1&_iepl%5Bdata%5D%5BwithoutEnrichment%5D=1&_iepl%5Bposition%5D=1&_iepl%5BrgKey%5D=AC%3A7189970&_iepl%5BinteractionType%5D=profileView).
 
