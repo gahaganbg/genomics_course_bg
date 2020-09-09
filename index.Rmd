@@ -1,7 +1,7 @@
 ---
 title: "Evolutionary Genomics and Bioinformatics Coursework"
 author: "Ben Gahagan"
-date: "Last updated 8/31/2020"
+date: "Last updated 9/7/2020"
 output: html_document
 bibliography: data/references2.bib
 ---
@@ -11,14 +11,17 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-
 ## Links to Lab Assignments
 
 [Gahagan Week 1 Assignment](Lab1_BIG.html)
 
 [Gahagan Week 2 Assignment](Lab2_BG.html)
 
-## Some Background
+[Gahagan Week 3 Assignment A](Lab3A_BG.html)
+
+[Gahagan Week 3 Assignment B](Lab3B_BG.html)
+
+## Some Background About Me
 <font size="4">
 I am a fisher,
 ![](images/fisher.png)
@@ -43,6 +46,8 @@ Here is a recent [CV](Gahagan CV 6_2020.pdf)
 ![](images/be_excellent.gif)
 
 which does have a philosophical basis [@billnted]
+
+Finally, if you are not having fun, why are you doing it?
 </font>
 
 ## REFERENCES

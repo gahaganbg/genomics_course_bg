@@ -1,0 +1,96 @@
+---
+title: "Lab 3B"
+author: "Ben Gahagan"
+date: "9/9/2020"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+surveys <- read_csv("data/portal_data_joined.csv")
+```
+
+## Challenge 1
+```{r}
+challenge <- surveys %>% 
+  filter(year < 1995) %>% 
+  select(year, sex, weight)
+```
+
+## Challenge 2
+```{r}
+challenge2 <- surveys %>% 
+  filter(!is.na(hindfoot_length)) %>% 
+  mutate(hindfoot_cm = hindfoot_length/10) %>% 
+  filter(hindfoot_cm < 3) %>% 
+  select(species_id, hindfoot_cm)
+```
+
+## Challenge 3
+<font size="4">
+Task 1
+```{r}
+surveys %>% 
+  count(plot_type)
+```
+
+Task 2
+```{r}
+surveys %>%
+  filter(!is.na(hindfoot_length)) %>% 
+  group_by(species_id) %>%
+  summarize(mean_length = mean(hindfoot_length, na.rm = TRUE),
+            min_length = min(hindfoot_length, na.rm = TRUE),
+            max_length = max(hindfoot_length, na.rm = TRUE),
+            count = n()) # %>% 
+  #print(n = 25)
+```
+
+Task 3
+```{r}
+surveys %>%
+  filter(!is.na(weight)) %>% 
+  group_by(year) %>% 
+  filter(weight == max(weight)) %>% 
+  select(year, genus, species_id, weight) #%>% 
+  #print(n = 27)
+```
+
+## Challenge 4
+
+Task 1
+```{r summarize and spread }
+gpp_spread <- surveys %>%
+  filter(!is.na(genus)) %>%
+  group_by(plot_id, year) %>%
+  summarize(n_genus = n_distinct(genus)) %>% 
+  spread(key = year, value = n_genus, fill = 0)
+gpp_spread
+```
+
+Task 2
+```{r re-gather}
+gpp_gather <- gpp_spread %>% 
+  gather(key = year, value = n_genus, -plot_id)
+gpp_gather
+```
+
+Task 3
+```{r creative gathering}
+task3 <- surveys %>%
+   gather(key= "measurement", value = "value", weight, hindfoot_length)
+task3
+```
+
+Task 4
+```{r}
+task4 <- task3 %>% 
+  filter(!is.na(value)) %>%
+  select(year,plot_type,measurement,value) %>% 
+  group_by(year, measurement, plot_type) %>% 
+  summarize(avg = mean(value)) %>% 
+  spread(key = measurement, value = avg)
+task4
+```
+
+</font>

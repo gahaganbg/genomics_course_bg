@@ -1,0 +1,85 @@
+---
+title: "Lab 3A"
+author: "Ben Gahagan"
+date: "9/7/2020"
+output: html_document
+---
+<font size="4">
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+```{r, eval=FALSE}
+ download.file(url="https://ndownloader.figshare.com/files/2292169",
+              destfile = "data/portal_data_joined.csv")
+```
+
+```{r load data}
+surveys <- read.csv("data/portal_data_joined.csv")
+head(surveys)
+view(surveys)
+```
+
+## Challenge 1
+```{r}
+str(surveys)
+```
+- The object surveys is a dataframe.
+- surveys has 34,786 rows and 13 columns.
+- There have been 40 species recorded. 
+
+## Challenge 2
+```{r}
+surveys_200 <- surveys[200, ]
+surveys[34786, ]
+tail(surveys)
+surveys_last <- surveys[34786, ]
+nrow(surveys)
+34786/2
+surveys_middle <- surveys[17393, ]
+surveys[-(7:34786), ]
+```
+
+## Challenge 3
+```{r}
+sex <- factor(surveys$sex)
+levels(sex)[1] <- "undetermined"
+levels(sex)[2] <- "female"
+levels(sex)[3] <- "male"
+levels(sex)
+sex <- factor(sex, levels = c("female", "male", "undetermined"))
+plot(as.factor(sex))
+```
+
+
+Errors in animal_data include no quotes on character or factor vectors, wrong number of rows in feel, missing comma or inserted space between "8" and "1.1", hard to say if this should be "81.1" or "8, 1.1"
+
+```{r}
+country_climate <- data.frame(
+       country = c("Canada", "Panama", "South Africa", "Australia"),
+       climate = c("cold", "hot", "temperate", "hot/temperate"),
+       temperature = c(10, 30, 18, "15"),
+       northern_hemisphere = c(TRUE, TRUE, FALSE, "FALSE"),
+       has_kangaroo = c(FALSE, FALSE, FALSE, 1)
+       )
+```
+I would predict that:
+country = Factor
+
+climate = Factor
+
+temperature = Factor
+
+northern = Factor
+
+kangaroo = Logical
+
+- They were close to what I expected with the kangaroos coerced to numeric rather than logical.
+- If stringsAsFactors=FALSE were used the Factors would have been characters.
+- Quotations would need to be removed from the final row of the temperature and Northern Hemispher columns and has_kangaroo should either be coded 1,0 or TRUE,FALSE consistently.
+
+*The missing dates failed because there are only 30 days in April and September. This could be a keypuch error and should be investigated to try to find out the actual date of the observations.
+
+
+
+</font>
