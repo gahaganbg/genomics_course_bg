@@ -58,7 +58,6 @@ datatable(top10)
 ```
 
 
-
 ## We now interrupt this lab report for something completely different
 ![](images/And-Now2.png)
 
