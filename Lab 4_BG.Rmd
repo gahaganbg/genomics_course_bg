@@ -1,0 +1,171 @@
+---
+title: "Lab 4 Exercises"
+author: "Ben Gahagan"
+date: "9/14/2020"
+output: 
+  rmarkdown::html_document:
+    theme: spacelab
+---
+<font size="4">
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(DT)
+```
+## Exercise Part 1
+
+1. Import data
+
+```{r import data, results='hide', message=FALSE}
+report_03_12_2020 <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/03-12-2020.csv")) %>%
+  rename(Country_Region = "Country/Region", Province_State = "Province/State")
+
+report_09_12_2020 <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-12-2020.csv")) 
+```
+
+
+2. Total by country
+
+```{r summarize by country}
+Sept_sum <-report_09_12_2020 %>% 
+  group_by(Country_Region) %>% 
+  summarize(Conf_cases = sum(Confirmed))
+datatable(Sept_sum)
+```
+
+
+3. US totals by state, high to low
+
+```{r US totals}
+US_sum <-report_09_12_2020 %>% 
+  filter(Country_Region == "US") %>% 
+  filter(Province_State != "Recovered") %>% #Spurious State so removed
+  group_by(Province_State) %>% 
+  summarize(Conf_cases = sum(Confirmed)) %>% 
+  arrange(desc(Conf_cases))
+datatable(US_sum)
+```
+
+
+4. Top 10 Countries for deaths
+
+```{r top 10 deaths}
+top10 <-report_09_12_2020 %>% 
+  group_by(Country_Region) %>% 
+  summarize(Deaths = sum(Deaths)) %>% 
+  arrange(desc(Deaths)) %>% 
+  slice(1:10)
+datatable(top10)
+```
+
+
+
+## We now interrupt this lab report for something completely different
+![](images/And-Now2.png)
+
+Ok, not that different...
+
+[Data Carpentry Data Visualization Exercises](Lab4a_BG.html)
+
+
+## Exercise 2 
+
+5. Geom_point plots of the top 10 countries in cases and deaths on 3/12/20 and 9/12/20. 
+
+First I create dataframes for each plot
+
+```{r create top 10 dfs}
+#March Cases
+mar_topcases <- report_03_12_2020 %>% 
+   group_by(Country_Region) %>% 
+  summarize(Conf_cases = sum(Confirmed)) %>% 
+  arrange(desc(Conf_cases)) %>% 
+    slice(1:10)
+#March Deaths
+mar_topdeaths <- report_03_12_2020 %>% 
+   group_by(Country_Region) %>% 
+  summarize(Deaths = sum(Deaths)) %>% 
+  arrange(desc(Deaths)) %>% 
+    slice(1:10)
+#September Cases
+sep_topcases <- report_09_12_2020 %>% 
+   group_by(Country_Region) %>% 
+  summarize(Conf_cases = sum(Confirmed)) %>% 
+  arrange(desc(Conf_cases)) %>% 
+    slice(1:10)
+#September Deaths           
+sep_topdeaths <- report_09_12_2020 %>% 
+   group_by(Country_Region) %>% 
+  summarize(Deaths = sum(Deaths)) %>% 
+  arrange(desc(Deaths)) %>% 
+    slice(1:10)
+```
+
+Next I create scatterpoint plots with countries arranged by cases or deaths
+
+```{r scatterplot top 10s}
+#March Top Cases
+mar_topcases %>% 
+  mutate(Country_Region = fct_reorder(as.factor(Country_Region), desc(Conf_cases))) %>% 
+  ggplot(aes(Country_Region, Conf_cases)) + #data = mar_topcases,
+  geom_point(alpha=0.8, color="dodgerblue", size=4) +
+  xlab("Country") +
+  ylab("Confirmed cases") +
+  ggtitle("Confirmed cases by country: March")
+#March Top Deaths
+mar_topdeaths %>% 
+  mutate(Country_Region = fct_reorder(as.factor(Country_Region), desc(Deaths))) %>% 
+ggplot(aes(Country_Region, Deaths)) +
+  geom_point(alpha=0.8, color="red", size=4) +
+  xlab("Country") +
+  ggtitle("Top deaths by country: March")
+#September Top Cases
+sep_topcases %>% 
+  mutate(Country_Region = fct_reorder(as.factor(Country_Region), desc(Conf_cases))) %>%
+ggplot(aes(Country_Region, Conf_cases)) +
+  geom_point(alpha=0.8, color="dodgerblue", size=4) +
+  xlab("Country") +
+  ylab("Confirmed cases") +
+  ggtitle("Confirmed cases by country: September")
+#September Top Deaths
+sep_topdeaths %>% 
+  mutate(Country_Region = fct_reorder(as.factor(Country_Region), desc(Deaths))) %>% 
+ggplot(aes(Country_Region, Deaths)) +
+  geom_point(alpha=0.8, color="red", size=4) +
+  xlab("Country") +
+  ggtitle("Top deaths by country: September")
+```
+
+6. And finally barplots of the same data
+
+```{r barplot top 10s}
+#March Top Cases
+mar_topcases %>% 
+  mutate(Country_Region = fct_reorder(as.factor(Country_Region), desc(Conf_cases))) %>% 
+  ggplot(aes(Country_Region, Conf_cases)) + #data = mar_topcases,
+ geom_bar(stat= 'identity', alpha=0.75, fill="dodgerblue", size=4) +
+  xlab("Country") +
+  ggtitle("Confirmed cases by country: March")
+#March Top Deaths
+mar_topdeaths %>% 
+  mutate(Country_Region = fct_reorder(as.factor(Country_Region), desc(Deaths))) %>% 
+  ggplot(aes(Country_Region, Deaths)) +
+  geom_bar(stat= 'identity', alpha=0.75, fill="red", size=4) +
+  xlab("Country") +
+  ggtitle("Top deaths by country: March")
+#September Top Cases
+sep_topcases %>% 
+  mutate(Country_Region = fct_reorder(as.factor(Country_Region), desc(Conf_cases))) %>%
+  ggplot(aes(Country_Region, Conf_cases)) +
+  geom_bar(stat= 'identity', alpha=0.75, fill="dodgerblue", size=4) +
+  xlab("Country") +
+  ggtitle("Confirmed cases by country: September")
+#September Top Deaths
+sep_topdeaths %>% 
+  mutate(Country_Region = fct_reorder(as.factor(Country_Region), desc(Deaths))) %>% 
+  ggplot(aes(Country_Region, Deaths)) +
+  geom_bar(stat= 'identity', alpha=0.75, fill="red", size=4) +
+  xlab("Country") +
+  ggtitle("Top deaths by country: September")
+```
+
+</font>

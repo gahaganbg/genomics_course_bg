@@ -1,0 +1,57 @@
+---
+title: "Lab 4a"
+author: "Ben Gahagan"
+date: "9/20/2020"
+output: 
+  rmarkdown::html_document:
+    theme: spacelab
+---
+<font size="4">
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(hexbin)
+surveys_complete <- read_csv("data/surveys_complete.csv")
+```
+
+```{r intro plots}
+surveys_plot <- ggplot(data = surveys_complete, 
+                       mapping = aes(x = weight, y = hindfoot_length))
+surveys_plot + 
+    geom_point()
+```
+
+Optional Challenge
+```{r}
+surveys_plot +
+ geom_hex()
+```
+The hexagonal plot conveys the density of the data better than the sctterplot but at the cost of detail and precision of points outside the densest areas.
+
+## Challenge 1
+```{r challenge 1}
+chall1 <- ggplot(surveys_complete,
+                 aes(species_id, weight))
+chall1 +
+  geom_point(alpha = 0.1, aes(color = plot_type))
+```
+
+No, it is not a good way to look at this data.
+
+## Challenge 2
+```{r monkeying boxplots}
+ggplot(data = surveys_complete, mapping = aes(x = species_id, y = weight)) +
+  geom_jitter(alpha = 0.3, color = "tomato") +
+  geom_violin(alpha = 0) +
+  scale_y_log10()+
+  ylab("weight (log10)")
+```
+
+Hindfoot length boxplot
+
+```{r monkeying boxplots2}
+ggplot(data = surveys_complete, mapping = aes(x = species_id, y = hindfoot_length)) +
+  geom_jitter(alpha = 0.3, aes(color = as.factor(plot_id))) +
+  geom_violin(alpha = 0)
+```
+</font>
