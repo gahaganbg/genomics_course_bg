@@ -151,7 +151,7 @@ USratio <- time_series_long_joined %>%
 
 #Plot
 ggplot(USratio, aes(Date, ratio)) +
-    geom_area(color="blue", fill = "blue", alpha= 0.4)
+    geom_area(color="blue", fill = "blue", alpha= 0.4) +
 labs(title = "US deaths to confirmed cases ratio by day",
      x = "Date",
      y = "Deaths:Confirmed cases") +
