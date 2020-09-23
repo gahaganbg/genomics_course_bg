@@ -1,0 +1,107 @@
+---
+title: "Data Visualization"
+author: "Ben Gahagan"
+date: "9/21/2020"
+output: 
+  rmarkdown::html_document:
+    theme: spacelab
+---
+---
+title: "Lab 4a"
+author: "Ben Gahagan"
+date: "9/20/2020"
+output: 
+  rmarkdown::html_document:
+    theme: spacelab
+---
+<font size="4">
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(hexbin)
+surveys_complete <- read_csv("data/surveys_complete.csv")
+```
+
+```{r intro plots}
+surveys_plot <- ggplot(data = surveys_complete, 
+                       mapping = aes(x = weight, y = hindfoot_length))
+surveys_plot + 
+    geom_point()
+```
+
+Optional Challenge
+```{r}
+surveys_plot +
+ geom_hex()
+```
+The hexagonal plot conveys the density of the data better than the sctterplot but at the cost of detail and precision of points outside the densest areas.
+
+## Challenge 1
+```{r challenge 1}
+chall1 <- ggplot(surveys_complete,
+                 aes(species_id, weight))
+chall1 +
+  geom_point(alpha = 0.1, aes(color = plot_type))
+```
+
+No, it is not a good way to look at this data.
+
+## Challenge 2
+```{r monkeying boxplots}
+ggplot(data = surveys_complete, mapping = aes(x = species_id, y = weight)) +
+  geom_jitter(alpha = 0.3, color = "tomato") +
+  geom_violin(alpha = 0) +
+  scale_y_log10()+
+  ylab("weight (log10)")
+```
+
+Hindfoot length boxplot
+
+```{r monkeying boxplots2}
+ggplot(data = surveys_complete, mapping = aes(x = species_id, y = hindfoot_length)) +
+  geom_jitter(alpha = 0.3, aes(color = as.factor(plot_id))) +
+  geom_violin(alpha = 0)
+```
+
+## Challenge 3
+```{r avg weight by species}
+yearly_weight <- surveys_complete %>%
+  group_by(year,species) %>% 
+  summarize(avg_weight = mean(weight))
+ggplot(data=yearly_weight, aes(x=year, y=avg_weight)) +
+  geom_line() +
+  facet_wrap(facets = vars(species), nrow = 5)+
+  labs(title = "Mean weight by year for all species",
+       x= "Year",
+       y="Average weight")+
+  theme_bw()+
+  theme(text=element_text(size = 16))
+```
+
+## Challenge 4
+
+Create a whiz-bang customized plot. I chose to improve the violin plot with points created earlier. 
+```{r show offs}
+grey_theme <- theme(axis.text.x = element_text(colour="grey20", size = 12, 
+                                               angle = 90, hjust = 0.5, 
+                                               vjust = 0.5),
+                    axis.text.y = element_text(colour = "grey20", size = 12),
+                    text=element_text(size = 16))
+ggplot(data = surveys_complete, mapping = aes(x = species_id, y = weight)) +
+  geom_point(alpha = 0.3,
+             aes(color = sex), 
+             position = position_jitterdodge()) +
+  geom_violin(alpha = 0.3) +
+  scale_y_log10()+
+  facet_wrap(facets = vars(plot_type), nrow = 3) +
+  labs(title = "Weight by species ID across plot types",
+       x = "Species ID",
+       y = "Weight (log10 transformed)") +
+  scale_color_discrete(name = "Sex", labels = c("Female", "Male")) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  grey_theme
+```
+
+
+
+</font>

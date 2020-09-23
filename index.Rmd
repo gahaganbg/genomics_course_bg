@@ -2,7 +2,9 @@
 title: "Evolutionary Genomics and Bioinformatics Coursework"
 author: "Ben Gahagan"
 date: "Last updated 9/20/2020"
-output: html_document
+output: 
+  rmarkdown::html_document:
+    theme: spacelab
 bibliography: data/references2.bib
 ---
 
@@ -23,16 +25,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 [Gahagan Week 4 Assignment](Lab-4_BG.html)
 
+[Gahagan Data Carpenters Visualization Exercises](Data_Vis_Exercises.html)
+
+[Gahagan Week 5 Assignment](Lab5_BG.html)
+
 ## Some Background About Me
 <font size="4">
 I am a fisher,
-![](images/fisher.png)
+![](images/fisher.png){width=50%}
 
 hunter,
-![](images/hunter.jpg)
+![](images/hunter.jpg){width=50%}
 
 father,
-![](images/father2.png)
+![](images/father2.png){width=50%}
 
 
 and [biologist](https://www.researchgate.net/profile/Ben_Gahagan).
