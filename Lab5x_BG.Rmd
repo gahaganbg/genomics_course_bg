@@ -95,7 +95,7 @@ ggplot(dailydeaths, aes(Date, Deaths)) +
   grey_theme
 dev.off()
 ```
-![Total COVID deaths by day](images/time_series_example_plot.png) 
+![](images/time_series_example_plot.png) 
 
 Challenge 2: Turn one of the exercises from Lab 5 into an interactive graph with plotyly
 
@@ -146,5 +146,5 @@ labs(title = "US deaths to confirmed cases ratio by day",
   transition_reveal(Date)
 animate(p, end_pause = 20)
 ```
-```
+
 
