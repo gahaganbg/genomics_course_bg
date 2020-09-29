@@ -31,6 +31,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 [Gahagan Week 5 Extra Assignment](Lab5x_BG.html)
 
+[Gahagan Week 6 Assignment](Lab6_BG.html)
+
 ## Some Background About Me
 <font size="4">
 I am a fisher,
