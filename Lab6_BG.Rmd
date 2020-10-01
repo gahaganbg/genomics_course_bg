@@ -8,7 +8,7 @@ output:
 ---
 <font size="4">
 
-```{r setup, message=FALSE, warning=FALSE}
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE}
 library(tidyverse)
 library(maps)
 library(mapdata)
@@ -27,16 +27,52 @@ grey_theme <- theme(axis.text.x = element_text(colour="grey20", size = 12,
 
 Exercise 1: 
 
-```{r world confirmed, message=FALSE, warning=FALSE, results = "hide"}
+```{r world deaths, message=FALSE, warning=FALSE, results = "hide"}
 daily_report <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-26-2020.csv")) %>% 
   rename(Long = "Long_") 
 
-ggplot(daily_report, aes(x = Long, y = Lat, size = Confirmed/10000)) +
+dr <- daily_report %>% 
+  dplyr::group_by(Country_Region) %>% 
+  filter(!is.na(Lat)) %>% 
+  summarize(Cases = sum(Confirmed),
+            Deaths = sum(Deaths),
+            Lat = median(Lat),
+            Long = median(Long))
+
+#Use plotly to troubleshoot median solution
+#ggplotly(  
+#ggplot(dr, aes(x = Long, y = Lat, size = Deaths, text= Country_Region)) +
+#  borders("world", colour = NA, fill = "grey90") +
+#  theme_bw() +
+#  geom_point(shape = 21, color='darkmagenta', fill='darkorchid', alpha = 0.5) +
+#  labs(title = 'World COVID-19 Confirmed cases',x = '', y = '',
+#       size="Cases (x10,000)") +
+#  grey_theme +
+#  theme(legend.position = "right") +
+#  coord_fixed(ratio=1.5)
+#) # Close plotly
+
+#Correct bad median lat/lons
+dr$Lat[dr$Country_Region=="US"] <- 37.0902
+dr$Long[dr$Country_Region=="US"] <- -95.7129
+dr$Lat[dr$Country_Region=="United Kingdom"] <- 55.3781
+dr$Long[dr$Country_Region=="United Kingdom"] <- -3.4360
+dr$Lat[dr$Country_Region=="Canada"] <- 56.1304
+dr$Long[dr$Country_Region=="Canada"] <- -106.3468
+dr$Lat[dr$Country_Region=="Russia"] <- 61.5240
+dr$Long[dr$Country_Region=="Russia"] <- 105.3188
+dr$Lat[dr$Country_Region=="Denmark"] <- 56.2639
+dr$Long[dr$Country_Region=="Denmark"] <- -9.5018
+dr$Lat[dr$Country_Region=="Australia"] <- 25.2744
+dr$Long[dr$Country_Region=="Australia"] <- 133.7751
+
+#Final plot
+ggplot(dr, aes(x = Long, y = Lat, size = Deaths/1000, text= Country_Region)) +
   borders("world", colour = NA, fill = "grey90") +
   theme_bw() +
   geom_point(shape = 21, color='darkmagenta', fill='darkorchid', alpha = 0.5) +
-  labs(title = 'World COVID-19 Confirmed cases',x = '', y = '',
-       size="Cases (x10,000)") +
+  labs(title = 'World COVID-19 Deaths',x = '', y = '',
+       size="Deaths (x1,000)") +
   grey_theme +
   theme(legend.position = "right") +
   coord_fixed(ratio=1.5)
