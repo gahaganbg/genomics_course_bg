@@ -28,7 +28,7 @@ grey_theme <- theme(axis.text.x = element_text(colour="grey20", size = 12,
 Well, this has been a crazy time and I miss seeing all of you. As part of a course I am working with  COVID-19 data and so I thought I would share some of what I have been doing with all of you as it might be interesting. All of this is based on data available up to 9/26 that has been aggregated and made public by Johns Hopkins University [@JHU_COVID]. It is the same data ( and some of the same coding, done in a language called R [@RCoreTeam]) you see in graphics from a lot of major news sources (confession: I still like working with fish nerd data more, even if it is less timely! But this is cool too).
 
 To start with, I generated maps of the cases and deaths reported so far in the world. For the deaths map, you can scroll over points to see the Country and number of deaths.
-```{r world confirmed, message=FALSE, warning=FALSE, results = "hide", echo=FALSE}
+```{r world confirmed, message=FALSE, warning=FALSE, results = "hide", echo=FALSE, fig.width=10}
 daily_report <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-26-2020.csv")) %>% 
   rename(Long = "Long_") 
 
