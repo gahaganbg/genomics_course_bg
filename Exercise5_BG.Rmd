@@ -25,27 +25,14 @@ grey_theme <- theme(axis.text.x = element_text(colour="grey20", size = 12,
                     text=element_text(size = 16))
 ```
 
-Well, this has been a crazy time and I miss seeing all of you. As part of a course I am working with  COVID-19 data and so I thought I would share some of what I have been doing with all of you as it might be interesting. All of this is based on data available up to 9/26 that has been aggregated and made public by Johns Hopkins University [@JHU_COVID]. It is the same data ( and some of the same coding, done in a language called R [@RCoreTeam]) you see in graphics from a lot of major news sources (confession: I still like working with fish nerd data more, even if it is less timely! But this is cool too).
+Well, this has been a crazy time and I miss seeing all of you. As part of a course at UMass Amherst I am working with  COVID-19 data, so I thought I would share some of what I have been doing with all of you as it might be interesting. 
 
-To start with, I generated maps of the cases and deaths reported so far in the world. For the deaths map, you can scroll over points to see the Country and number of deaths.
+All of these figures are based on data available up to 10/5 that has been aggregated and made public by Johns Hopkins University [@JHU_COVID]. It is the same data ( and some of the same coding, done in a language called R [@RCoreTeam]) you see in graphics from a lot of major news sources and I use in all of my fish work (confession: I still like working with fish nerd data more, even if it is less timely! But this is cool too).
+
+To start with, I generated maps of the cases and deaths reported so far in the world. For both maps, you can scroll over points to see the Country and number of  cases or deaths. For areas with denser clusters of points, you can use the zoom tool or buttons at the top of the map to focus in or out. The autoscale button restores the original zoom level.
+
 ```{r world confirmed, message=FALSE, warning=FALSE, results = "hide", echo=FALSE, fig.width=10}
-daily_report <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-26-2020.csv")) %>% 
-  rename(Long = "Long_") 
-
-ggplot(daily_report, aes(x = Long, y = Lat, size = Confirmed/10000)) +
-  borders("world", colour = NA, fill = "grey90") +
-  theme_bw() +
-  geom_point(shape = 21, color='darkmagenta', fill='darkorchid', alpha = 0.5) +
-  labs(title = 'World COVID-19 Confirmed cases',x = '', y = '',
-       size="Cases (x10,000)") +
-  grey_theme +
-  theme(legend.position = "right") +
-  coord_fixed(ratio=1.5)
-
-```
-
-```{r world deaths,  message=FALSE, warning=FALSE, echo=FALSE}
-daily_report <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-26-2020.csv")) %>% 
+daily_report <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/10-05-2020.csv")) %>% 
   rename(Long = "Long_") 
 
 dr <- daily_report %>% 
@@ -55,6 +42,19 @@ dr <- daily_report %>%
             Deaths = sum(Deaths),
             Lat = median(Lat),
             Long = median(Long))
+
+#Use plotly to troubleshoot median solution
+#ggplotly(  
+#ggplot(dr, aes(x = Long, y = Lat, size = Deaths, text= Country_Region)) +
+#  borders("world", colour = NA, fill = "grey90") +
+#  theme_bw() +
+#  geom_point(shape = 21, color='darkmagenta', fill='darkorchid', alpha = 0.5) +
+#  labs(title = 'World COVID-19 Confirmed cases',x = '', y = '',
+#       size="Cases (x10,000)") +
+#  grey_theme +
+#  theme(legend.position = "right") +
+#  coord_fixed(ratio=1.5)
+#) # Close plotly
 
 #Correct bad median lat/lons
 dr$Lat[dr$Country_Region=="US"] <- 37.0902
@@ -67,6 +67,65 @@ dr$Lat[dr$Country_Region=="Russia"] <- 61.5240
 dr$Long[dr$Country_Region=="Russia"] <- 105.3188
 dr$Lat[dr$Country_Region=="Denmark"] <- 56.2639
 dr$Long[dr$Country_Region=="Denmark"] <- -9.5018
+dr$Lat[dr$Country_Region=="Australia"] <- -25.2744
+dr$Long[dr$Country_Region=="Australia"] <- 133.7751
+
+
+```
+
+```{r world cases plotly, message=FALSE, warning=FALSE, echo=FALSE, fig.width=10}
+ggplotly(
+ggplot(dr, aes(text= Country_Region, x = Long, y = Lat, size = Cases/10000)) +
+  borders("world", colour = NA, fill = "grey90") +
+  theme_bw() +
+  geom_point(shape = 21, color='darkmagenta', fill='darkorchid', alpha = 0.5) +
+  labs(title = 'World COVID-19 Confirmed cases',x = '', y = '',
+       size="Cases (x10,000)") +
+  grey_theme +
+  theme(legend.position = "right") +
+  coord_fixed(ratio=1.5)
+)
+```
+
+
+```{r world deaths,  message=FALSE, warning=FALSE, echo=FALSE, fig.width=10}
+daily_report <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/10-05-2020.csv")) %>% 
+  rename(Long = "Long_") 
+
+dr <- daily_report %>% 
+  dplyr::group_by(Country_Region) %>% 
+  filter(!is.na(Lat)) %>% 
+  summarize(Cases = sum(Confirmed),
+            Deaths = sum(Deaths),
+            Lat = median(Lat),
+            Long = median(Long))
+
+#Use plotly to troubleshoot median solution
+#ggplotly(  
+#ggplot(dr, aes(x = Long, y = Lat, size = Deaths, text= Country_Region)) +
+#  borders("world", colour = NA, fill = "grey90") +
+#  theme_bw() +
+#  geom_point(shape = 21, color='darkmagenta', fill='darkorchid', alpha = 0.5) +
+#  labs(title = 'World COVID-19 Confirmed cases',x = '', y = '',
+#       size="Cases (x10,000)") +
+#  grey_theme +
+#  theme(legend.position = "right") +
+#  coord_fixed(ratio=1.5)
+#) # Close plotly
+
+#Correct bad median lat/lons
+dr$Lat[dr$Country_Region=="US"] <- 37.0902
+dr$Long[dr$Country_Region=="US"] <- -95.7129
+dr$Lat[dr$Country_Region=="United Kingdom"] <- 55.3781
+dr$Long[dr$Country_Region=="United Kingdom"] <- -3.4360
+dr$Lat[dr$Country_Region=="Canada"] <- 56.1304
+dr$Long[dr$Country_Region=="Canada"] <- -106.3468
+dr$Lat[dr$Country_Region=="Russia"] <- 61.5240
+dr$Long[dr$Country_Region=="Russia"] <- 105.3188
+dr$Lat[dr$Country_Region=="Denmark"] <- 56.2639
+dr$Long[dr$Country_Region=="Denmark"] <- -9.5018
+dr$Lat[dr$Country_Region=="Australia"] <- -25.2744
+dr$Long[dr$Country_Region=="Australia"] <- 133.7751
 
 #Final plot
 ggplotly(
@@ -76,6 +135,8 @@ ggplotly(
   geom_point(shape = 21, color='darkmagenta', fill='darkorchid', alpha = 0.5) +
   labs(title = 'World COVID-19 Deaths',x = '', y = '',
        size="Deaths (x1,000)") +
+  grey_theme +
+  theme(legend.position = "right") +
   coord_fixed(ratio=1.5)
 )
 ```
@@ -162,8 +223,10 @@ I also thought you all might be interested to see what things look like case wis
 
 First, Connecticut:
 
+
 ```{r code to prep for exercise 4, message=FALSE, warning=FALSE, results = "hide", echo=FALSE}
-daily_report <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-26-2020.csv")) %>% 
+points <- read.csv(file='data/report.csv')
+daily_report <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/10-05-2020.csv")) %>% 
   rename(Long = "Long_") %>% 
   filter(Province_State == "Connecticut") %>% 
   group_by(Admin2) %>% 
@@ -183,16 +246,19 @@ state_join <- left_join(ct_county, daily_report, by = c("County" = "Admin2"))
 
 ```{r plot interactive map of CT, echo=FALSE}
 ggplotly(
-  ggplot(data = ct_county, mapping = aes(x = long, y = lat, group = group, text = County)) + 
+  ggplot(data = ct_county, mapping = aes(text = County)) + 
     coord_fixed(1.3) + 
     # Add data layer
-    geom_polygon(data = state_join, aes(fill = Cases), color = "grey40") +
-    geom_point(x=-72.3315, y=41.4196, fill = "blanched almond", alpha = 0.2,
-               shape = 23, color= "grey30") +
-    geom_point(x=-72.9149, y=41.3256, fill = "blanched almond", alpha = 0.2,
-               shape = 23, color= "grey30") +
+    geom_polygon(data = state_join, aes(x=long, y=lat, fill = Cases), color = "grey40") +
+    #geom_point(x=-72.3315, y=41.4196, fill = "blanched almond", alpha = 0.2,
+    #          shape = 23, color= "grey30") +
+    #geom_point(x=-72.9149, y=41.3256, fill = "blanched almond", alpha = 0.2,
+    #          shape = 23, color= "grey30") +
     scale_fill_viridis(option = "plasma",
-                         name = "Cases") +
+                       name = "Cases") +
+    geom_point(data = filter(points, State == "CT"),
+               aes(x=long, y=lat), fill = "blanched almond", alpha = 0.8,
+               shape = 23, color= "grey30") +
     ggtitle("COVID-19 Cases in CT") +
     # Cleaning up the graph
     labs(x=NULL, y=NULL) +
@@ -205,7 +271,7 @@ ggplotly(
 
 Next, New York:
 ```{r New York plotly coding, message=FALSE, warning=FALSE, results = "hide", echo=FALSE}
-daily_report <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-26-2020.csv")) %>% 
+daily_report <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/10-05-2020.csv")) %>% 
   rename(Long = "Long_") %>% 
   filter(Province_State == "New York") %>% 
   group_by(Admin2) %>% 
@@ -225,14 +291,19 @@ state_join <- left_join(ny_county, daily_report, by = c("County" = "Admin2"))
 
 ```{r New York Plotly Map, echo=FALSE}
 ggplotly(
-  ggplot(data = ny_county, mapping = aes(x = long, y = lat, group = group, text = County)) + 
+  ggplot(data = ny_county, mapping = aes(text = County)) + 
     coord_fixed(1.3) + 
     # Add data layer
-    geom_polygon(data = state_join, aes(fill = Cases), color = "grey40") +
-    geom_point(x=-73.7193, y=41.1614, fill = "blanched almond", alpha = 0.2,
-               shape = 23, color= "grey30") +
+    geom_polygon(data = state_join, aes(x=long, y=lat, fill = Cases), color = "grey40") +
+    #geom_point(x=-72.3315, y=41.4196, fill = "blanched almond", alpha = 0.2,
+    #          shape = 23, color= "grey30") +
+    #geom_point(x=-72.9149, y=41.3256, fill = "blanched almond", alpha = 0.2,
+    #          shape = 23, color= "grey30") +
     scale_fill_viridis(option = "plasma",
-                         name = "Cases") +
+                       name = "Cases") +
+    geom_point(data = filter(points, State == "NY"),
+               aes(x=long, y=lat), fill = "blanched almond", alpha = 0.8,
+               shape = 23, color= "grey30") +
     ggtitle("COVID-19 Cases in NY") +
     # Cleaning up the graph
     labs(x=NULL, y=NULL) +
@@ -245,7 +316,7 @@ ggplotly(
 
 North Carolina:
 ```{r NC plotly coding, message=FALSE, warning=FALSE, results = "hide", echo=FALSE}
-daily_report <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-26-2020.csv")) %>% 
+daily_report <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/10-05-2020.csv")) %>% 
   rename(Long = "Long_") %>% 
   filter(Province_State == "North Carolina") %>% 
   group_by(Admin2) %>% 
@@ -265,15 +336,19 @@ state_join <- left_join(nc_county, daily_report, by = c("County" = "Admin2"))
 
 ```{r NC Plotly Map, echo=FALSE}
 ggplotly(
-  ggplot(data = nc_county, mapping = aes(x = long, y = lat, group = group, text = County)) + 
+  ggplot(data = nc_county, mapping = aes(text = County)) + 
     coord_fixed(1.3) + 
     # Add data layer
-    geom_polygon(data = state_join, aes(fill = Cases), color = "grey40") +
-    geom_point(x=-79.9929, y=36.2632, fill = "blanched almond", alpha = 0.2, 
-               shape = 23, color= "grey30", size = 2) +
-    #geom_point(x=-72.9149, y=41.3256, color = "blanchedalmond", alpha = 0.2, shape = 18) +
+    geom_polygon(data = state_join, aes(x=long, y=lat, fill = Cases), color = "grey40") +
+    #geom_point(x=-72.3315, y=41.4196, fill = "blanched almond", alpha = 0.2,
+    #          shape = 23, color= "grey30") +
+    #geom_point(x=-72.9149, y=41.3256, fill = "blanched almond", alpha = 0.2,
+    #          shape = 23, color= "grey30") +
     scale_fill_viridis(option = "plasma",
-                         name = "Cases") +
+                       name = "Cases") +
+    geom_point(data = filter(points, State == "NC"),
+               aes(x=long, y=lat), fill = "blanched almond", alpha = 0.8,
+               shape = 23, color= "grey30") +
     ggtitle("COVID-19 Cases in NC") +
     # Cleaning up the graph
     labs(x=NULL, y=NULL) +
@@ -287,7 +362,7 @@ ggplotly(
 
 Lastly, Massachusetts:
 ```{r MA plotly coding, message=FALSE, warning=FALSE, results = "hide", echo=FALSE}
-daily_report <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-26-2020.csv")) %>% 
+daily_report <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/10-05-2020.csv")) %>% 
   rename(Long = "Long_") %>% 
   filter(Province_State == "Massachusetts") %>% 
   group_by(Admin2) %>% 
@@ -307,14 +382,19 @@ state_join <- left_join(ma_county, daily_report, by = c("County" = "Admin2"))
 
 ```{r MA Plotly Map, echo=FALSE}
 ggplotly(
-  ggplot(data = ma_county, mapping = aes(x = long, y = lat, group = group, text = County)) + 
+  ggplot(data = ma_county, mapping = aes(text = County)) + 
     coord_fixed(1.3) + 
     # Add data layer
-    geom_polygon(data = state_join, aes(fill = Cases), color = "grey40") +
-    geom_point(x=-70.8474, y=42.7792, fill = "blanched almond", alpha = 0.2, shape = 23, color= "grey30") +
-    #geom_point(x=-72.9149, y=41.3256, color = "blanchedalmond", alpha = 0.2, shape = 18) +
+    geom_polygon(data = state_join, aes(x=long, y=lat, fill = Cases), color = "grey40") +
+    #geom_point(x=-72.3315, y=41.4196, fill = "blanched almond", alpha = 0.2,
+    #          shape = 23, color= "grey30") +
+    #geom_point(x=-72.9149, y=41.3256, fill = "blanched almond", alpha = 0.2,
+    #          shape = 23, color= "grey30") +
     scale_fill_viridis(option = "plasma",
-                         name = "Cases") +
+                       name = "Cases") +
+    geom_point(data = filter(points, State == "MA"),
+               aes(x=long, y=lat), fill = "blanched almond", alpha = 0.8,
+               shape = 23, color= "grey30") +
     ggtitle("COVID-19 Cases in MA") +
     # Cleaning up the graph
     labs(x=NULL, y=NULL) +

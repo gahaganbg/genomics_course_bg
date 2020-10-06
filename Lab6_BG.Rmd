@@ -63,7 +63,7 @@ dr$Lat[dr$Country_Region=="Russia"] <- 61.5240
 dr$Long[dr$Country_Region=="Russia"] <- 105.3188
 dr$Lat[dr$Country_Region=="Denmark"] <- 56.2639
 dr$Long[dr$Country_Region=="Denmark"] <- -9.5018
-dr$Lat[dr$Country_Region=="Australia"] <- 25.2744
+dr$Lat[dr$Country_Region=="Australia"] <- -25.2744
 dr$Long[dr$Country_Region=="Australia"] <- 133.7751
 
 #Final plot
