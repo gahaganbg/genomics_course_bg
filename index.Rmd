@@ -43,6 +43,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 [Gahagan Week 10 Assignment](Lab10_BG.html)
 
+[Gahagan Week 11 Assignment]()
+
+[Gahagan Week 11X Assignment]()
+
+[Gahagan Week 12 Assignment]()
+
+[Gahagan Week 13 Assignment](https://gahaganbg.github.io/MyWebSite/)
+
 ## Some Background About Me
 <font size="4">
 I am a fisher,
