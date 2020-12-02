@@ -1,7 +1,7 @@
 ---
 title: "Evolutionary Genomics and Bioinformatics Coursework"
 author: "Ben Gahagan"
-date: "Last updated 9/23/2020"
+date: "Last updated 12/2/2020"
 output: 
   rmarkdown::html_document:
     theme: spacelab
@@ -35,7 +35,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 [Gahagan Week 7 Assignment](Lab7_BG.html)
 
-[Gahagan Week 8 Assignment]()
+[Gahagan Week 8 Assignment](Lab8_BG.html)
 
 [Gahagan Week 9 Assignment](Lab9A_BG.html)
 
@@ -43,9 +43,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 [Gahagan Week 10 Assignment](Lab10_BG.html)
 
-[Gahagan Week 11 Assignment]()
+[Gahagan Week 11 Assignment](Lab11_BG.html)
 
-[Gahagan Week 11X Assignment]()
+[Gahagan Week 11 Extra Assignment]()
 
 [Gahagan Week 12 Assignment]()
 
