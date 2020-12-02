@@ -1,0 +1,443 @@
+---
+title: "Lab 11X"
+author: "Ben Gahagan"
+date: "12/2/2020"
+output: 
+  rmarkdown::html_document:
+    theme: spacelab
+---
+<font size="4">
+
+# Ordination
+
+Let's ordinate!!!
+
+## Load Packages, Prepare Data
+```{r}
+library("phyloseq"); packageVersion("phyloseq")
+```
+```{r}
+data(GlobalPatterns)
+library("ggplot2"); packageVersion("ggplot2")
+```
+```{r}
+library("plyr"); packageVersion("plyr")
+```
+```{r}
+theme_set(theme_bw())
+```
+
+Filter out low-occurence OTUs
+```{r}
+GP = GlobalPatterns
+wh0 = genefilter_sample(GP, filterfun_sample(function(x) x > 5), A=0.5*nsamples(GP))
+GP1 = prune_taxa(wh0, GP)
+```
+
+Transform to even sampling depth
+```{r}
+GP1 = transform_sample_counts(GP1, function(x) 1E6 * x/sum(x))
+```
+
+Keep only the most abundant five phyla.
+```{r}
+phylum.sum = tapply(taxa_sums(GP1), tax_table(GP1)[, "Phylum"], sum, na.rm=TRUE)
+top5phyla = names(sort(phylum.sum, TRUE))[1:5]
+GP1 = prune_taxa((tax_table(GP1)[, "Phylum"] %in% top5phyla), GP1)
+```
+
+Assign human or not
+```{r}
+human = get_variable(GP1, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue")
+sample_data(GP1)$human <- factor(human)
+```
+
+## Four main ordination plots
+
+Relies largely on the `plot_ordination` function
+
+### Just OTUs
+
+OTU's plotted by phylum
+```{r}
+GP.ord <- ordinate(GP1, "NMDS", "bray")
+p1 = plot_ordination(GP1, GP.ord, type="taxa", color="Phylum", title="taxa")
+print(p1)
+```
+
+Let's separate by phylum to make this less confusing and over-plotted
+```{r}
+p1 + facet_wrap(~Phylum, 3)
+```
+
+### (2) Just samples
+
+Plot only samples with shape dependent on human association
+```{r}
+p2 = plot_ordination(GP1, GP.ord, type="samples", color="SampleType", shape="human") 
+p2 + geom_polygon(aes(fill=SampleType)) + geom_point(size=5) + ggtitle("samples")
+```
+
+### (3) biplot graphic
+
+Can make biplot of samples and ordination
+```{r}
+p3 = plot_ordination(GP1, GP.ord, type="biplot", color="SampleType", shape="Phylum", title="biplot")
+# Some stuff to modify the automatic shape scale
+GP1.shape.names = get_taxa_unique(GP1, "Phylum")
+GP1.shape <- 15:(15 + length(GP1.shape.names) - 1)
+names(GP1.shape) <- GP1.shape.names
+GP1.shape["samples"] <- 16
+p3 + scale_shape_manual(values=GP1.shape)
+```
+
+### (4) split graphic
+
+Reduce the occlusion and noise form previous with split option
+```{r}
+p4 = plot_ordination(GP1, GP.ord, type="split", color="Phylum", shape="human", label="SampleType", title="split") 
+p4
+```
+
+play with colors
+```{r}
+gg_color_hue <- function(n){
+    hues = seq(15, 375, length=n+1)
+    hcl(h=hues, l=65, c=100)[1:n]
+}
+color.names <- levels(p4$data$Phylum)
+p4cols <- gg_color_hue(length(color.names))
+names(p4cols) <- color.names
+p4cols["samples"] <- "black"
+p4 + scale_color_manual(values=p4cols)
+```
+
+## Supported Ordination Methods
+
+Methods and loops and bears oh my
+```{r}
+dist = "bray"
+ord_meths = c("DCA", "CCA", "RDA", "DPCoA", "NMDS", "MDS", "PCoA")
+plist = llply(as.list(ord_meths), function(i, physeq, dist){
+        ordi = ordinate(physeq, method=i, distance=dist)
+        plot_ordination(physeq, ordi, "samples", color="SampleType")
+}, GP1, dist)
+```
+```{r}
+names(plist) <- ord_meths
+```
+
+manipulation
+```{r}
+pdataframe = ldply(plist, function(x){
+    df = x$data[, 1:2]
+    colnames(df) = c("Axis_1", "Axis_2")
+    return(cbind(df, x$data))
+})
+names(pdataframe)[1] = "method"
+```
+
+Now we can make a pretty plot
+```{r}
+p = ggplot(pdataframe, aes(Axis_1, Axis_2, color=SampleType, shape=human, fill=SampleType))
+p = p + geom_point(size=4) + geom_polygon()
+p = p + facet_wrap(~method, scales="free")
+p = p + scale_fill_brewer(type="qual", palette="Set1")
+p = p + scale_colour_brewer(type="qual", palette="Set1")
+p
+```
+
+Or you can single out a plot by indexing
+```{r}
+plist[[2]] 
+```
+
+layer it up (I think the polygons look awful fwiw)
+```{r}
+p = plist[[2]] + scale_colour_brewer(type="qual", palette="Set1")
+p = p + scale_fill_brewer(type="qual", palette="Set1")
+p = p + geom_point(size=5) + geom_polygon(aes(fill=SampleType))
+p
+```
+
+## MDS ("PCoA") on Unifrac Distances
+
+Like the heading says
+```{r}
+ordu = ordinate(GP1, "PCoA", "unifrac", weighted=TRUE)
+plot_ordination(GP1, ordu, color="SampleType", shape="human")
+```
+
+Layer and fancy it up
+```{r}
+p = plot_ordination(GP1, ordu, color="SampleType", shape="human")
+p = p + geom_point(size=7, alpha=0.75)
+p = p + scale_colour_brewer(type="qual", palette="Set1")
+p + ggtitle("MDS/PCoA on weighted-UniFrac distance, GlobalPatterns")
+```
+
+# Alpha diversity graphics
+
+These examples use the `plot_richness` functions. And as the author acknowledges not a great names since there are many measures of diversity/species richness.
+
+## Load packages, set parameters
+```{r}
+library("phyloseq"); packageVersion("phyloseq")
+```
+```{r}
+data(GlobalPatterns)
+```
+```{r}
+library("ggplot2"); packageVersion("ggplot2")
+```
+```{r}
+theme_set(theme_bw())
+pal = "Set1"
+scale_colour_discrete <-  function(palname=pal, ...){
+  scale_colour_brewer(palette=palname, ...)
+}
+scale_fill_discrete <-  function(palname=pal, ...){
+  scale_fill_brewer(palette=palname, ...)
+}
+```
+
+## Prepare data
+
+Prune OTUs that are not present in any samples
+```{r}
+GP <- prune_species(speciesSums(GlobalPatterns) > 0, GlobalPatterns)
+```
+
+## Plot Examples
+
+Default output
+```{r}
+plot_richness(GP)
+```
+
+use `measures` argument to get rid of some issues
+```{r}
+plot_richness(GP, measures=c("Chao1", "Shannon"))
+```
+
+Seta  sample type to condense the plot a little
+```{r}
+plot_richness(GP, x="SampleType", measures=c("Chao1", "Shannon"))
+```
+
+Bring in new variable (human or not)
+```{r}
+sampleData(GP)$human <- getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue")
+```
+
+Use new variable and other layering to get all the info in
+```{r}
+plot_richness(GP, x="human", color="SampleType", measures=c("Chao1", "Shannon"))
+```
+
+Merge some samples to further refine the plot
+```{r}
+GPst = merge_samples(GP, "SampleType")
+# repair variables that were damaged during merge (coerced to numeric)
+sample_data(GPst)$SampleType <- factor(sample_names(GPst))
+sample_data(GPst)$human <- as.logical(sample_data(GPst)$human)
+```
+
+Make plots
+
+```{r}
+p = plot_richness(GPst, x="human", color="SampleType", measures=c("Chao1", "Shannon"))
+p + geom_point(size=5, alpha=0.7)
+```
+
+## More details about ggplot2
+
+Some ggplot background 
+```{r}
+p$layers
+```
+
+edit
+```{r}
+p$layers <- p$layers[-1]
+p + geom_point(size=5, alpha=0.7)
+```
+
+# Heatmap Plots
+
+A tutorial on the `plot_heatmap` function in phyloseq.
+This is also the first tutorial that has a lot of useful and interesting background info, which I appreciate
+
+## Examples
+### Load Packages, Data
+```{r}
+library("phyloseq"); packageVersion("phyloseq")
+```
+```{r}
+library("ggplot2"); packageVersion("ggplot2")
+```
+```{r}
+theme_set(theme_bw())
+```
+
+## Plot a 300-taxa dataset
+Bacteria
+```{r}
+data("GlobalPatterns")
+gpt <- subset_taxa(GlobalPatterns, Kingdom=="Bacteria")
+gpt <- prune_taxa(names(sort(taxa_sums(gpt),TRUE)[1:300]), gpt)
+plot_heatmap(gpt, sample.label="SampleType")
+```
+
+## Subset a smaller dataset based on Archaeal phylum
+```{r}
+gpac <- subset_taxa(GlobalPatterns, Phylum=="Crenarchaeota")
+```
+
+## Default `plot_heatmap` settings
+
+use default on subset of data
+```{r}
+plot_heatmap(gpac)
+```
+
+## Re-label by a sample variable and taxonomic family
+
+Relabeled based on "SampleType" and "Family"
+```{r}
+(p <- plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family"))
+```
+
+## Re-label axis titles
+
+Change the axis labels but not on individual features (Can't this be done like 3 different ways?!?)
+```{r}
+p$scales$scales[[1]]$name <- "My X-Axis"
+p$scales$scales[[2]]$name <- "My Y-Axis"
+print(p)
+```
+
+## Now repeat the plot, but change the color scheme.
+
+```{r}
+plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family", low="#000033", high="#CCFF66")
+```
+
+```{r}
+plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family", low="#000033", high="#FF3300")
+```
+
+```{r}
+plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family", low="#000033", high="#66CCFF")
+```
+
+```{r}
+plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family", low="#66CCFF", high="#000033", na.value="white")
+```
+
+```{r}
+plot_heatmap(gpac, "NMDS", "bray", "SampleType", "Family", low="#FFFFCC", high="#000033", na.value="white")
+```
+
+## Now try different ordination methods, distances
+
+Mix it up, mix it up.
+```{r}
+plot_heatmap(gpac, "NMDS", "jaccard")
+```
+
+```{r}
+plot_heatmap(gpac, "DCA", "none", "SampleType", "Family")
+```
+
+```{r}
+plot_heatmap(gpac, "RDA", "none", "SampleType", "Family")
+```
+
+```{r}
+plot_heatmap(gpac, "PCoA", "bray", "SampleType", "Family")
+```
+
+```{r}
+plot_heatmap(gpac, "PCoA", "unifrac", "SampleType", "Family")
+```
+
+```{r}
+plot_heatmap(gpac, "MDS", "unifrac", "SampleType", "Family", weighted=TRUE)
+```
+
+And here is somethign similar to what we have done previously with heirarchical clustering
+```{r}
+heatmap(otu_table(gpac))
+```
+
+# Plot Microbiome Network
+## Load Package and Example Data
+```{r}
+library(phyloseq); packageVersion("phyloseq")
+```
+
+```{r}
+packageVersion("ggplot2")
+```
+```{r}
+data(enterotype)
+```
+
+Set random seed for reproducibility
+```{r}
+set.seed(711L)
+```
+
+Remove NAs
+```{r}
+enterotype = subset_samples(enterotype, !is.na(Enterotype))
+```
+
+## The plot_net function
+
+Try the defaults
+```{r}
+plot_net(enterotype, maxdist = 0.4, point_label = "Sample_ID")
+```
+
+Let's use some visual variabels to make sense of the patterns
+```{r}
+plot_net(enterotype, maxdist = 0.3, color = "SeqTech", shape="Enterotype")
+```
+
+Trying at higher `maxdist`
+```{r}
+plot_net(enterotype, maxdist = 0.6, color = "SeqTech", shape="Enterotype")
+```
+
+## The plot_network function
+
+Make it
+```{r}
+ig <- make_network(enterotype, max.dist=0.3)
+```
+
+Plot it
+```{r}
+plot_network(ig, enterotype)
+```
+
+Patterns in names and such again so let's go back tousing colors and shapes to visualize
+```{r}
+plot_network(ig, enterotype, color="SeqTech", shape="Enterotype", line_weight=0.4, label=NULL)
+```
+
+Lower `max.dist`
+```{r}
+ig <- make_network(enterotype, max.dist=0.2)
+plot_network(ig, enterotype, color="SeqTech", shape="Enterotype", line_weight=0.4, label=NULL)
+```
+
+Try different methods
+```{r}
+ig <- make_network(enterotype, dist.fun="bray", max.dist=0.3)
+plot_network(ig, enterotype, color="SeqTech", shape="Enterotype", line_weight=0.4, label=NULL)
+```
+
+Aaaaaaaaand that is the end of the tutorials.
