@@ -47,7 +47,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 [Gahagan Week 11 Extra Assignment](Lab11x_BG.html)
 
-[Gahagan Week 12 Assignment]()
+[Gahagan Week 12 Assignment](BG_Lab12.html)
 
 [Gahagan Week 13 Assignment](https://gahaganbg.github.io/MyWebSite/)
 

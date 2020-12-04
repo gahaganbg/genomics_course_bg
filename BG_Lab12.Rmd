@@ -1,0 +1,47 @@
+---
+title: "Lab 12"
+author: "Ben Gahagan"
+date: "December 4, 2020"
+output: 
+rmarkdown::html_document:
+    theme: spacelab
+---
+<font size="4">
+
+```{r global-options, include=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+```
+
+# Cytoscape Tutorial Output
+During both tutorials Cytoscape often did not offer the same pallettes as the tutorial for visualizing networks, so I improvised a little where I had to.
+
+## Basic Data Visualization
+
+![](images/data_vis.png)
+
+## Differential Expression
+
+Here is the final DE up regulated network
+
+![](images/DE_up.png)
+
+And here is the final down regulated network
+
+![](images/DE_down.png)
+
+And here is the ovarian cancer network
+
+![](images/Ovarian.png)
+
+## RCy3
+
+The directions for the lab were a bit unclear on which graphs you wanted presented. I have included the final DataFrame and GraphNEL examples.
+
+DateFrame:
+
+![](images/DataFrame.png)
+
+GraphNEL:
+
+![](images/GraphNEL.png)
+
